@@ -92,28 +92,34 @@ mr_trash_df =
   mutate(sports_balls = as.integer(sports_balls)) 
 
  mr_trash_df = mutate(mr_trash_df, mrdf = grocery_bags - glass_bottles)
+ 
+ mr_trash_df
 ```
 
 ```{r}
 prof_trash_df = 
   readxl::read_excel("data/Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", range="A2:M97") %>% 
   janitor::clean_names() %>% 
-  drop_na(dumpster) 
+  drop_na(dumpster) %>% 
+  mutate(year = as.character(year))
+  
 
 prof_trash_df = mutate(prof_trash_df, profdf = grocery_bags - glass_bottles )
-  
+
+prof_trash_df
 ```
 
 ## Combine the two dataset
 
 ```{r}
 trash_wheel =
-  full_join(mr_trash_df, prof_trash_df, by = "weight_tons") 
+  full_join(mr_trash_df, prof_trash_df) 
 
 total_weight_pf = sum(prof_trash_df$weight_tons)
 
 total_sb_mr = filter(mr_trash_df, year == "2020") %>% select(sports_balls) %>% sum()
 
+trash_wheel
 ```
 
 * There are a total number of `r nrow(trash_wheel)` observations in the dataset. There are a total number of `r ncol(trash_wheel)` variables in the dataset. The key variables' names are `r names(trash_wheel)`
@@ -136,6 +142,8 @@ pols_df <- pols_df %>% mutate( president = ifelse(prez_gop == "0", "dem","gop"))
 pols_df <- subset(pols_df, select = -day)
 pols_df <- subset(pols_df, select = -prez_dem)
 pols_df <- subset(pols_df, select = -prez_gop)
+
+pols_df
 ```
 
 
@@ -152,6 +160,8 @@ snp_df <- subset(snp_df, select = -day)
 
 snp_df <- snp_df %>% 
   select(year, month, everything())
+
+snp_df
 ```
 
 
@@ -167,6 +177,8 @@ unemp_df =
   mutate(year = as.character(year))
 
 #somehow the "year" variable in this dataset is incompatible with the other two as being "double" type variable so I changed it to "character".
+
+unemp_df
 ```
 
 ## Merging the datasets
@@ -177,6 +189,9 @@ fte_df =
   
 five_thirty_eight = 
   left_join(fte_df, unemp_df, by = c("year", "month"))
+
+fte_df
+five_thirty_eight
 ```
 
 * The dataset ` pols_df ` contains `r nrow(pols_df)` observations and `r ncol(pols_df)` with the names `r names(pols_df)`. The year ranges from `r pols_df %>% pull(year) %>% range()`.
