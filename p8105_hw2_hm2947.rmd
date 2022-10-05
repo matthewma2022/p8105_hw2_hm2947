@@ -84,7 +84,6 @@ trans_ent %>%
 
 ## Problem 2
 
-
 ```{r}
 mr_trash_df = 
   readxl::read_excel("data/Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", range="A2:N550") %>% 
@@ -111,11 +110,15 @@ prof_trash_df = mutate(prof_trash_df, profdf = grocery_bags - glass_bottles )
 trash_wheel =
   full_join(mr_trash_df, prof_trash_df, by = "weight_tons") 
 
-sum(prof_trash_df$weight_tons)
+total_weight_pf = sum(prof_trash_df$weight_tons)
 
-filter(mr_trash_df, year == "2020") %>% select(sports_balls) %>% sum()
+total_sb_mr = filter(mr_trash_df, year == "2020") %>% select(sports_balls) %>% sum()
 
 ```
+
+* There are a total number of `r nrow(trash_wheel)` observations in the dataset. There are a total number of `r ncol(trash_wheel)` variables in the dataset. The key variables' names are `r names(trash_wheel)`
+* The total weight of trash collected by Professor Trash Wheel is `r total_weight_pf`
+* The total number of sports balls collected by Mr. Trash Wheel is `r total_sb_mr`
 
 ## Problem 3
 
@@ -162,6 +165,8 @@ unemp_df =
     values_to = "unemployment_rate") %>% 
   mutate(month = str_to_title(month)) %>% 
   mutate(year = as.character(year))
+
+#somehow the "year" variable in this dataset is incompatible with the other two as being "double" type variable so I changed it to "character".
 ```
 
 ## Merging the datasets
@@ -174,4 +179,12 @@ five_thirty_eight =
   left_join(fte_df, unemp_df, by = c("year", "month"))
 ```
 
+* The dataset ` pols_df ` contains `r nrow(pols_df)` observations and `r ncol(pols_df)` with the names `r names(pols_df)`. The year ranges from `r pols_df %>% pull(year) %>% range()`.
 
+* The dataset ` snp_df ` contains `r nrow(snp_df)` observations and `r ncol(snp_df)` with the names `r names(snp_df)`. The year ranges from `r snp_df %>% pull(year) %>% range()`.
+
+* The dataset ` unemp_df ` contains `r nrow(unemp_df)` observations and `r ncol(unemp_df)` with the names `r names(unemp_df)`. The year ranges from `r unemp_df %>% pull(year) %>% range()`.
+
+* The merged dataset ` fte_df ` between `pols_df` and `snp_df` contains `r nrow(fte_df)` observations and `r ncol(fte_df)` with the names `r names(fte_df)`. The year ranges from `r fte_df %>% pull(year) %>% range()`.
+
+* The merged dataset `five_thirty_eight ` between the resulting merged dataset `fte_df` and `unemp_df` contains `r nrow(five_thirty_eight)` observations and `r ncol(five_thirty_eight)` with the names `r names(five_thirty_eight)`. The year ranges from `r five_thirty_eight %>% pull(year) %>% range()`.
